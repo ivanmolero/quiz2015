@@ -1,5 +1,19 @@
 var models = require('../models/models.js');
 
+exports.create = function(req, res){
+  var quiz = models.Quiz.build(req.body.quiz);
+  quiz.save({fields:["pregunta", "respuesta"]}).then(function(){
+    res.redirect('/quizes');
+  })
+};
+
+exports.new = function(req, res) {
+  var quiz = models.Quiz.build(
+    {pregunta: 'Pregunta', respuesta: 'Respuesta'}
+  );
+  res.render('quizes/new', {quiz: quiz});
+};
+
 exports.load = function(req, res, next, quizId) {
   models.Quiz.findById(quizId).then(
     function(quiz) {
@@ -9,7 +23,7 @@ exports.load = function(req, res, next, quizId) {
       } else { next(new Error('No existe quizId=' + quizId));}
     }
   ).catch(function(error) {next(error);});
-}
+};
 
 exports.index = function(req, res) {
   models.Quiz.findAll().then(function(quizes){
