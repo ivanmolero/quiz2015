@@ -12,6 +12,8 @@ router.get('/author', function(req, res, next) {
   res.render('author', {});
 });
 
+router.param('quizId', quizController.load);
+
 //router.get('/quizes/question', quizController.question);
 //router.get('/quizes/answer', quizController.answer);
 
