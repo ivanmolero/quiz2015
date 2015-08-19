@@ -35,9 +35,15 @@ exports.load = function(req, res, next, quizId) {
 };
 
 exports.index = function(req, res) {
-  models.Quiz.findAll().then(function(quizes){
-    res.render('quizes/index.ejs', {quizes: quizes, errors: []});
-  })
+  if (req.query.search) {
+    models.Quiz.findAll({where: ["pregunta like ?", '%' + req.query.search.replace(' ','%') + '%']}).then(function(quizes){
+      res.render('quizes/index.ejs', {quizes: quizes, errors: []});
+    })
+  } else {
+    models.Quiz.findAll().then(function(quizes){
+      res.render('quizes/index.ejs', {quizes: quizes, errors: []});
+    })
+  }
 };
 
 exports.show = function(req, res){
