@@ -32,18 +32,40 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/users', users);
+app.use(function(req, res, next){
+  console.log("datos desde la funcion de tiempo");
+  if (req.session.user) {
+    if (req.session.hora) {
+      var horaactual = new Date();
+      var seg = (horaactual - req.session.hora) / 1000;
+      if (seg > 120 ) {
+        delete req.session.user;
+        delete req.session.hora;
+        next();
+      }
+    }
+    req.session.hora = new Date();
+    next();
+  }
+  next();
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  if(!req.session.redir) {
+    req.session.redir = '/';
+  }
   if (!req.path.match(/\/login|\/logout/)) {
     req.session.redir = req.path;
   }
   res.locals.session = req.session;
+  console.log("datos desde la funcion estandar");
   next();
 //  var err = new Error('Not Found');
 //  err.status = 404;
 //  next(err);
 });
+
 
 app.use('/', routes);
 
