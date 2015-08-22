@@ -27,28 +27,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser('Quiz 2015'));
+// Please read this: https://github.com/expressjs/session/tree/v1.11.3
+app.use(session({ secret: 'Quiz 2015', cookie: { maxAge: 120000 }}));
 app.use(session());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
-
-//app.use('/users', users);
-app.use(function(req, res, next){
-  console.log("datos desde la funcion de tiempo");
-  if (req.session.user) {
-    if (req.session.hora) {
-      var horaactual = new Date();
-      var seg = (horaactual - req.session.hora) / 1000;
-      if (seg > 120 ) {
-        delete req.session.user;
-        delete req.session.hora;
-        next();
-      }
-    }
-    req.session.hora = new Date();
-    next();
-  }
-  next();
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
